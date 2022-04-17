@@ -1,0 +1,6 @@
+Bill breakdown: 
+pizza:                    ...$5 
+popcorn:                  ...$3 
+burger:                   ...$5 
+tip:                      ...$2.00 
+total:                    ...$15.00 
