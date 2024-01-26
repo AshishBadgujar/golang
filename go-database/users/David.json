@@ -1,0 +1,12 @@
+{
+	"Name": "David",
+	"Age": 30,
+	"Contact": "6543210987",
+	"Company": "davidexample.co",
+	"Address": {
+		"City": "Sydney",
+		"State": "NSW",
+		"Country": "Australia",
+		"Pincode": 2000
+	}
+}
