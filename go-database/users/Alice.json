@@ -1,0 +1,12 @@
+{
+	"Name": "Alice",
+	"Age": 28,
+	"Contact": "9876543210",
+	"Company": "aliceexample.com",
+	"Address": {
+		"City": "New York",
+		"State": "NY",
+		"Country": "USA",
+		"Pincode": 10001
+	}
+}

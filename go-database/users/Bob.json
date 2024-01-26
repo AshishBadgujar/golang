@@ -1,0 +1,12 @@
+{
+	"Name": "Bob",
+	"Age": 32,
+	"Contact": "8765432109",
+	"Company": "bobexample.org",
+	"Address": {
+		"City": "Los Angeles",
+		"State": "CA",
+		"Country": "USA",
+		"Pincode": 90001
+	}
+}
