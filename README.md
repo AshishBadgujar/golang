@@ -10,6 +10,8 @@ This repository contains a diverse set of Go projects, including:
 
 - **go-fiber-mongo-hrms**: HR Management System using Fiber and MongoDB
 - **go-fiber-crm-basic**: Basic CRM system built with Fiber
+- **fiber-postgres-sqlc**: Todo REST API using Fiber + Postgres + sqlc (typed queries with pgx)
+- **fiber-postgres-gorm**: Todo REST API using Fiber + Postgres + GORM (ORM + AutoMigrate)
 - **go-nextjs-chat**: Chat application with Go backend and Next.js frontend
 - **go-beutiful-blogs**: Blog platform with beautiful UI
 - **go-todo**: Todo application with REST API
