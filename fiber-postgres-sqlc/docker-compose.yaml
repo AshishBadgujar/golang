@@ -14,3 +14,5 @@ services:
 
 volumes:
   postgres_data:
+
+# docker exec -i todo_postgres psql -U postgres -d todo_db < internal/db/schema.sql
