@@ -1,39 +1,42 @@
-# Todo API (Go + Fiber + Postgres + sqlc)
+# Todo App (Go + Fiber + Postgres + sqlc + React)
 
-A small **REST Todo API** built with:
+A full-stack Todo app with:
 
-- **Go** + **Fiber**
-- **PostgreSQL**
-- **sqlc** (typed queries) + **pgx/v5** (connection pool)
+- **Backend**: Go + Fiber + PostgreSQL + sqlc (pgx)
+- **Frontend**: React + Vite + TypeScript
 
 ## Features
 
-- **CRUD Todos**: create, list, get-by-id, update, delete
-- **Typed DB layer** via `sqlc` generated code (`internal/db/sqlc`)
-- **Graceful shutdown** on SIGINT/SIGTERM
+- **CRUD Todos** (via API + UI)
+- **PATCH toggle** for completion status
+- **Typed DB layer** via `sqlc` generated code
+- **CORS enabled** for local frontend dev
 
 ## Project structure
 
-- `cmd/server/`: app entrypoint
-- `internal/routes/`: HTTP routes
-- `internal/handlers/`: Fiber handlers (request/response)
-- `internal/services/`: business logic
-- `internal/database/`: Postgres connection (pgx pool)
-- `internal/db/schema.sql`: DB schema
-- `internal/db/queries/`: sqlc query files
-- `internal/db/sqlc/`: generated code (do not hand-edit)
+- `backend/`: Go/Fiber API
+  - `cmd/server/`: app entrypoint
+  - `internal/routes/`: HTTP routes
+  - `internal/handlers/`: Fiber handlers
+  - `internal/services/`: business logic
+  - `internal/database/`: Postgres connection
+  - `internal/db/schema.sql`: DB schema
+  - `internal/db/queries/`: sqlc query files
+  - `internal/db/sqlc/`: generated code (do not hand-edit)
+- `frontend/`: React UI (Vite)
 
 ## Prerequisites
 
-- **Go** (see `go.mod`)
+- **Go** (see `backend/go.mod`)
+- **Node.js** (for the React frontend)
 - **Docker** (for running Postgres locally)
-- Optional: **sqlc** CLI (only needed if you change SQL and want to re-generate)
+- Optional: **sqlc** CLI (only needed if you change SQL and want to re-generate queries)
 
-## Quickstart (local API + dockerized Postgres)
+## Quickstart (local dev)
 
-### 1) Start Postgres
+### 1) Start Postgres (Docker)
 
-From `fiber-postgres-sqlc/`:
+From `fiber-postgres-sqlc/backend/`:
 
 ```bash
 docker compose up -d
@@ -48,12 +51,12 @@ This starts Postgres on **localhost:5432** with:
 ### 2) Create tables (apply schema)
 
 ```bash
-docker exec -i todo_postgres psql -U postgres -d todo_db < internal/db/schema.sql
+docker exec -i todo_postgres psql -U postgres -d todo_db < backend/internal/db/schema.sql
 ```
 
-### 3) Configure environment variables
+### 3) Configure backend environment variables
 
-Create a `.env` file in `fiber-postgres-sqlc/` (the app loads it via `godotenv`):
+Create a `.env` file in `fiber-postgres-sqlc/backend/` (the API loads it via `godotenv`):
 
 ```bash
 cat > .env <<'EOF'
@@ -67,15 +70,30 @@ DB_NAME=todo_db
 EOF
 ```
 
-### 4) Run the API
+### 4) Run the backend API
 
 ```bash
+cd backend
 go run ./cmd/server
 ```
 
-Server listens on `http://localhost:8080` (or your `APP_PORT`).
+Backend listens on `http://localhost:8080` (or your `APP_PORT`).
 
-## API
+### 5) Run the frontend (React)
+
+From `fiber-postgres-sqlc/frontend/`:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Vite will print the local URL (commonly `http://localhost:5173`).
+
+Note: the frontend currently calls the API at `http://localhost:8080/api` (see `frontend/src/api/todos.ts`).
+
+## Backend API
 
 Base path: `/api/todos`
 
@@ -127,24 +145,25 @@ curl -i -X DELETE http://localhost:8080/api/todos/1
 
 SQL sources:
 
-- schema: `internal/db/schema.sql`
-- queries: `internal/db/queries/`
-- config: `sqlc.yaml`
+- schema: `backend/internal/db/schema.sql`
+- queries: `backend/internal/db/queries/`
+- config: `backend/sqlc.yaml`
 
 If you edit schema or queries, re-generate:
 
 ```bash
+cd backend
 sqlc generate
 ```
 
-Generated files go to `internal/db/sqlc/`.
+Generated files go to `backend/internal/db/sqlc/`.
 
 ## Notes / Troubleshooting
 
 - **Schema not applied**: if endpoints error with missing table, run the schema command again:
 
 ```bash
-docker exec -i todo_postgres psql -U postgres -d todo_db < internal/db/schema.sql
+docker exec -i todo_postgres psql -U postgres -d todo_db < backend/internal/db/schema.sql
 ```
 
 - **DB connection errors**: confirm env vars and that Postgres is running:
