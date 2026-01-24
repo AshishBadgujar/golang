@@ -23,7 +23,11 @@ func (s *TodoService) Create(ctx context.Context, title string) (*sqlc.Todo, err
 }
 
 func (s *TodoService) GetAll(ctx context.Context) ([]sqlc.Todo, error) {
-	return s.queries.GetTodos(ctx)
+	todos, err := s.queries.GetTodos(ctx)
+	if todos == nil {
+		return []sqlc.Todo{}, err
+	}
+	return todos, err
 }
 
 func (s *TodoService) GetByID(ctx context.Context, id int64) (*sqlc.Todo, error) {
@@ -42,6 +46,22 @@ func (s *TodoService) Update(
 		ID:        id,
 		Title:     title,
 		Completed: completed,
+	})
+	return &todo, err
+}
+
+func (s *TodoService) UpdateCompleted(ctx context.Context, id int64, completed bool) (*sqlc.Todo, error) {
+	todo, err := s.queries.UpdateTodoCompleted(ctx, sqlc.UpdateTodoCompletedParams{
+		ID:        id,
+		Completed: completed,
+	})
+	return &todo, err
+}
+
+func (s *TodoService) UpdateTitle(ctx context.Context, id int64, title string) (*sqlc.Todo, error) {
+	todo, err := s.queries.UpdateTodoTitle(ctx, sqlc.UpdateTodoTitleParams{
+		ID:    id,
+		Title: title,
 	})
 	return &todo, err
 }

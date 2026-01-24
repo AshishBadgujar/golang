@@ -56,20 +56,32 @@ func (h *TodoHandler) Update(c *fiber.Ctx) error {
 	id, _ := strconv.ParseInt(c.Params("id"), 10, 64)
 
 	var req struct {
-		Title     string `json:"title"`
-		Completed bool   `json:"completed"`
+		Title     *string `json:"title"`
+		Completed *bool   `json:"completed"`
 	}
 
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	todo, err := h.service.Update(
-		c.Context(),
-		id,
-		req.Title,
-		req.Completed,
+	if req.Title == nil && req.Completed == nil {
+		return c.Status(400).JSON(fiber.Map{"error": "nothing to update"})
+	}
+
+	// No extra read: run a targeted UPDATE depending on which fields are present.
+	var (
+		todo interface{}
+		err  error
 	)
+
+	switch {
+	case req.Title != nil && req.Completed == nil:
+		todo, err = h.service.UpdateTitle(c.Context(), id, *req.Title)
+	case req.Title == nil && req.Completed != nil:
+		todo, err = h.service.UpdateCompleted(c.Context(), id, *req.Completed)
+	default:
+		todo, err = h.service.Update(c.Context(), id, *req.Title, *req.Completed)
+	}
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}

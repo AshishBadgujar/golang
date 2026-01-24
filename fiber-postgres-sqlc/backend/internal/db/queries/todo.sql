@@ -19,6 +19,20 @@ SET title = $2,
 WHERE id = $1
 RETURNING *;
 
+-- name: UpdateTodoCompleted :one
+UPDATE todos
+SET completed = $2,
+    updated_at = now()
+WHERE id = $1
+RETURNING *;
+
+-- name: UpdateTodoTitle :one
+UPDATE todos
+SET title = $2,
+    updated_at = now()
+WHERE id = $1
+RETURNING *;
+
 -- name: DeleteTodo :exec
 DELETE FROM todos
 WHERE id = $1;

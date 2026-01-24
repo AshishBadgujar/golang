@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 
 	"todo-app/internal/config"
@@ -55,7 +56,7 @@ func main() {
 	app := fiber.New(fiber.Config{
 		AppName: "Todo API",
 	})
-
+	app.Use(cors.New())
 	// ------------------------------------------------------------------
 	// Dependency wiring
 	// ------------------------------------------------------------------

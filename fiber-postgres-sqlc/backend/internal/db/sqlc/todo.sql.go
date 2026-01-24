@@ -16,8 +16,8 @@ RETURNING id, title, completed, created_at, updated_at
 `
 
 type CreateTodoParams struct {
-	Title     string
-	Completed bool
+	Title     string `json:"title"`
+	Completed bool   `json:"completed"`
 }
 
 func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (Todo, error) {
@@ -102,13 +102,65 @@ RETURNING id, title, completed, created_at, updated_at
 `
 
 type UpdateTodoParams struct {
-	ID        int64
-	Title     string
-	Completed bool
+	ID        int64  `json:"id"`
+	Title     string `json:"title"`
+	Completed bool   `json:"completed"`
 }
 
 func (q *Queries) UpdateTodo(ctx context.Context, arg UpdateTodoParams) (Todo, error) {
 	row := q.db.QueryRow(ctx, updateTodo, arg.ID, arg.Title, arg.Completed)
+	var i Todo
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Completed,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateTodoCompleted = `-- name: UpdateTodoCompleted :one
+UPDATE todos
+SET completed = $2,
+    updated_at = now()
+WHERE id = $1
+RETURNING id, title, completed, created_at, updated_at
+`
+
+type UpdateTodoCompletedParams struct {
+	ID        int64 `json:"id"`
+	Completed bool  `json:"completed"`
+}
+
+func (q *Queries) UpdateTodoCompleted(ctx context.Context, arg UpdateTodoCompletedParams) (Todo, error) {
+	row := q.db.QueryRow(ctx, updateTodoCompleted, arg.ID, arg.Completed)
+	var i Todo
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Completed,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateTodoTitle = `-- name: UpdateTodoTitle :one
+UPDATE todos
+SET title = $2,
+    updated_at = now()
+WHERE id = $1
+RETURNING id, title, completed, created_at, updated_at
+`
+
+type UpdateTodoTitleParams struct {
+	ID    int64  `json:"id"`
+	Title string `json:"title"`
+}
+
+func (q *Queries) UpdateTodoTitle(ctx context.Context, arg UpdateTodoTitleParams) (Todo, error) {
+	row := q.db.QueryRow(ctx, updateTodoTitle, arg.ID, arg.Title)
 	var i Todo
 	err := row.Scan(
 		&i.ID,
