@@ -43,29 +43,57 @@ export function TodoPage() {
         loadTodos();
     }
 
+    const completedCount = todos.filter((t) => t.completed).length;
+    const remainingCount = todos.length - completedCount;
+
     return (
-        <>
-            <h1>Todo App</h1>
+        <div className="app-shell">
+            <div className="app-container">
+                <header className="app-header">
+                    <div>
+                        <h1 className="app-title">Todos</h1>
+                        <p className="app-subtitle">
+                            {remainingCount} remaining • {completedCount} done
+                        </p>
+                    </div>
+                </header>
 
-            <form onSubmit={handleSubmit}>
-                <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="New todo"
-                />
-                <button>Add</button>
-            </form>
+                <section className="todo-card">
+                    <form className="todo-form" onSubmit={handleSubmit}>
+                        <input
+                            className="todo-input"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            placeholder="Add a new todo..."
+                            aria-label="New todo title"
+                        />
+                        <button
+                            className="todo-add-btn"
+                            type="submit"
+                            disabled={!title.trim()}
+                        >
+                            Add
+                        </button>
+                    </form>
 
-            <ul>
-                {todos.map((todo) => (
-                    <TodoItem
-                        key={todo.id}
-                        todo={todo}
-                        onToggle={handleToggle}
-                        onDelete={handleDelete}
-                    />
-                ))}
-            </ul>
-        </>
+                    <ul className="todo-list">
+                        {todos.length === 0 ? (
+                            <li className="todo-empty">
+                                No todos yet. Add your first one above.
+                            </li>
+                        ) : (
+                            todos.map((todo) => (
+                                <TodoItem
+                                    key={todo.id}
+                                    todo={todo}
+                                    onToggle={handleToggle}
+                                    onDelete={handleDelete}
+                                />
+                            ))
+                        )}
+                    </ul>
+                </section>
+            </div>
+        </div>
     );
 }
